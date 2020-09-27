@@ -1,0 +1,18 @@
+{
+  "extends": ["airbnb-base", "plugin:import/errors", "plugin:import/warnings"],
+  "plugins": ["import", "jest"],
+  "settings": {
+    "import/resolver": {
+        "node": {
+            "extensions": [".js"]
+        }
+    }
+  },
+  "rules": {
+    "semi": ["error", "always"],
+    "space-before-function-paren": ["error", "never"],
+    "eqeqeq": ["error", "smart"],
+    "no-return-assign": 0
+  },
+  "env": {"es6": true}
+}
