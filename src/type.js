@@ -1,6 +1,5 @@
 import {
   isObject,
-  isEmptyObject,
   isArray,
   isBoolean,
   isNumber,
