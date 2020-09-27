@@ -3,6 +3,8 @@ import {
   max,
   min,
   length,
+  regex,
+  isOptional,
 } from '../src/type';
 
 import {
@@ -19,6 +21,26 @@ it('Test condition in array function', () => {
   };
 
   const errors = Person.validate(me);
+  expect(isArray(errors)).toBe(true);
+  expect(errors.length).toBe(0);
+});
+
+it('Test condition regex function', () => {
+  const A = new Type([[regex, /^\d+$/]]);
+
+  const a = '123';
+
+  const errors = A.validate(a);
+  expect(isArray(errors)).toBe(true);
+  expect(errors.length).toBe(0);
+});
+
+it('Test condition regex and optional function', () => {
+  const A = new Type([[isOptional], [regex, /^\d+$/]]);
+
+  const a = undefined;
+
+  const errors = A.validate(a);
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(0);
 });

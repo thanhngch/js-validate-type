@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "test-cov": "jest --coverage --runInBand --forceExit",
+    "show-test": "yarn run test-cov && open-cli ./coverage/lcov-report/index.html",
     "lint": "eslint src",
     "build": "babel -d build src",
     "prepublish": "npm run build"
@@ -27,11 +28,14 @@
   "devDependencies": {
     "@babel/cli": "^7.11.6",
     "@babel/core": "^7.11.6",
+    "@babel/plugin-transform-modules-commonjs": "^7.10.4",
     "@babel/preset-env": "^7.11.5",
     "eslint": "^7.10.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jest": "^24.0.2"
+    "eslint-plugin-jest": "^24.0.2",
+    "jest": "^26.4.2",
+    "open-cli": "^6.0.1"
   }
 }

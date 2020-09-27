@@ -13,6 +13,7 @@ import {
   isInteger,
 } from './util';
 
+const MAX_TYPE = 2048;
 const ALL_TYPE = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
 
 export const optional = 1;
@@ -190,10 +191,9 @@ export class Type {
       // validate object
       Object.keys(value).forEach((keyOfValue) => {
         const path = key ? `${key}.${keyOfValue}` : keyOfValue;
-        // eslint-disable-next-line no-underscore-dangle
         this.validateRecusive(value[keyOfValue], type[keyOfValue], path, valueParam);
       });
-    } else if (type) {
+    } else if (isNumber(type) && type < MAX_TYPE * 2) {
       // validate compose type, eg: string | number
       const arrayType = composeTypeToArray(type);
       let validateResult = false;
@@ -208,7 +208,7 @@ export class Type {
           message: `'${key}' is not valid type`,
         });
       }
-    } else if (!type) {
+    } else {
       this.listError.push({
         key,
         message: `type of '${key}' not found`,
