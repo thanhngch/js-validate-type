@@ -60,3 +60,13 @@ it('Test object Type in Type', () => {
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(0);
 });
+
+it('Test empty object', () => {
+  const Person = new Type({});
+
+  const me = {};
+
+  const errors = Person.validate(me);
+  expect(isArray(errors)).toBe(true);
+  expect(errors.length).toBe(0);
+});

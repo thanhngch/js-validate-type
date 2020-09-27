@@ -56,7 +56,7 @@ const validateObj = {
   [promise]: isPromise,
 };
 
-const composeTypeToArray = (_composeNumber) => {
+export const composeTypeToArray = (_composeNumber) => {
   const arrayType = [];
   let composeNumber = _composeNumber;
   for (let i = 0; composeNumber > 0; i += 1) {
@@ -181,18 +181,25 @@ export class Type {
           this.validateRecusive(v, type[0], key, valueParam);
         });
       }
-    } else if (isObject(value) && !isEmptyObject(value)) {
-      // set value key same key in type
-      Object.keys(type).forEach((keyOfKey) => {
-        if (value[keyOfKey] === undefined) {
-          value[keyOfKey] = undefined;
-        }
-      });
-      // validate object
-      Object.keys(value).forEach((keyOfValue) => {
-        const path = key ? `${key}.${keyOfValue}` : keyOfValue;
-        this.validateRecusive(value[keyOfValue], type[keyOfValue], path, valueParam);
-      });
+    } else if (isObject(value)) {
+      if (!isObject(type)) {
+        this.listError.push({
+          key,
+          message: `type not found on ${key}`,
+        });
+      } else {
+        // set value key same key in type
+        Object.keys(type).forEach((keyOfKey) => {
+          if (value[keyOfKey] === undefined) {
+            value[keyOfKey] = undefined;
+          }
+        });
+        // validate object
+        Object.keys(value).forEach((keyOfValue) => {
+          const path = key ? `${key}.${keyOfValue}` : keyOfValue;
+          this.validateRecusive(value[keyOfValue], type[keyOfValue], path, valueParam);
+        });
+      }
     } else if (isNumber(type) && type < MAX_TYPE * 2) {
       // validate compose type, eg: string | number
       const arrayType = composeTypeToArray(type);

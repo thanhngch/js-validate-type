@@ -32,6 +32,7 @@ it('Test error with condition function', () => {
   const errors = Person.validate(me);
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(1);
+  expect(errors[0].key).toBe('books');
 });
 
 it('Test error in array', () => {
@@ -46,6 +47,7 @@ it('Test error in array', () => {
   const errors = Person.validate(me);
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(1);
+  expect(errors[0].key).toBe('books');
 });
 
 it('Test type not support', () => {
@@ -60,6 +62,7 @@ it('Test type not support', () => {
   const errors = Person.validate(me);
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(1);
+  expect(errors[0].key).toBe('books');
 });
 
 it('Test value is not array', () => {
@@ -74,6 +77,7 @@ it('Test value is not array', () => {
   const errors = Person.validate(me);
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(1);
+  expect(errors[0].key).toBe('books');
 });
 
 it('Test value of array is not validate with function', () => {
@@ -88,6 +92,7 @@ it('Test value of array is not validate with function', () => {
   const errors = Person.validate(me);
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(1);
+  expect(errors[0].key).toBe('books');
 });
 
 it('Test value is not array', () => {
@@ -102,6 +107,7 @@ it('Test value is not array', () => {
   const errors = Person.validate(me);
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(1);
+  expect(errors[0].key).toBe('books');
 });
 
 it('Test assert function', () => {
@@ -142,6 +148,7 @@ it('Test array with condition has parameter is array', () => {
   const errors = Person.validate(me);
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(1);
+  expect(errors[0].key).toBe('books');
 });
 
 it('Test error key path', () => {
@@ -161,4 +168,34 @@ it('Test error key path', () => {
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(1);
   expect(errors[0].key).toBe('profile.name');
+});
+
+it('Test not found key', () => {
+  const Person = new Type({
+    profile: {
+      name: string,
+    },
+  });
+
+  const me = {}; // not found profile
+
+  const errors = Person.validate(me);
+  expect(isArray(errors)).toBe(true);
+  expect(errors.length).toBe(1);
+  expect(errors[0].key).toBe('profile');
+});
+
+it('Test empty type', () => {
+  const Person = new Type({});
+
+  const me = {
+    profile: {
+      name: 'John',
+    },
+  }; // not found profile
+
+  const errors = Person.validate(me);
+  expect(isArray(errors)).toBe(true);
+  expect(errors.length).toBe(1);
+  expect(errors[0].key).toBe('profile');
 });
