@@ -30,7 +30,6 @@ export const promise = 2048;
 
 export const max = (value, a) => a >= value;
 export const min = (value, a) => a <= value;
-export const email = (value) => /^\S+@\S+\.\S+$/.test(value);
 export const regex = (value, regexExpress) => regexExpress.test(value);
 
 export const length = (

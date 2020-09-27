@@ -1,7 +1,6 @@
 import {
   max,
   min,
-  email,
   regex,
   length,
   isOptional,
@@ -30,12 +29,6 @@ it('Test min()', () => {
 
   // min of value is 3, value = 2 so return false
   expect(min(value, 3)).toBe(false);
-});
-
-it('Test email()', () => {
-  expect(email('test@gmail.com')).toBe(true);
-  expect(email('test@gmail')).toBe(false);
-  expect(email('@gmail.com')).toBe(false);
 });
 
 it('Test regex()', () => {

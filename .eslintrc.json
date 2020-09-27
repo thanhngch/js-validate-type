@@ -12,7 +12,8 @@
     "semi": ["error", "always"],
     "space-before-function-paren": ["error", "never"],
     "eqeqeq": ["error", "smart"],
-    "no-return-assign": 0
+    "no-return-assign": 0,
+    "no-bitwise": "off"
   },
   "env": {"es6": true}
 }
