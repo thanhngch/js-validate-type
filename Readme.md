@@ -2,7 +2,10 @@
 Validate type in javascript.
 
 [![npm version](http://img.shields.io/npm/v/js-validate-type.svg?style=flat-square)](https://npmjs.org/package/js-validate-type)
-
+[![GitHub license](https://img.shields.io/github/license/thanhngch/js-validate-type.svg)](https://github.com/thanhngch/js-validate-type/blob/master/LICENSE)
+[![Build Status](http://img.shields.io/travis/thanhngch/js-validate-type.svg?style=flat-square)](https://travis-ci.org/thanhngch/js-validate-type)
+[![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
+[![Codecov](https://img.shields.io/codecov/c/github/thanhngch/js-validate-type.svg?style=flat-square)](https://codecov.io/gh/thanhngch/js-validate-type)
 ## Installation
 
 `npm i js-validate-type --save`
