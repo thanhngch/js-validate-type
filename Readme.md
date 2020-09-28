@@ -1,3 +1,8 @@
+## About
+Validate type in javascript.
+
+[![npm version](http://img.shields.io/npm/v/js-validate-type.svg?style=flat-square)](https://npmjs.org/package/js-validate-type)
+
 ## Installation
 
 `npm i js-validate-type --save`
