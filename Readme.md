@@ -1,6 +1,12 @@
+## Installation
+
+`npm i js-validate-type --save`
+
 ## How to using
 
 ```js
+import { Type, string } from 'js-validate-type';
+
 const Person = new Type({
   name: string,
   books: [string],
