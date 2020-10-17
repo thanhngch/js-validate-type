@@ -1,5 +1,5 @@
 ## About
-Validate type in javascript.
+Validate type in javascript. A lightweight, no-dependency library.
 
 [![npm version](http://img.shields.io/npm/v/js-validate-type.svg?style=flat-square)](https://npmjs.org/package/js-validate-type)
 [![GitHub license](https://img.shields.io/github/license/thanhngch/js-validate-type.svg)](https://github.com/thanhngch/js-validate-type/blob/master/LICENCE)
