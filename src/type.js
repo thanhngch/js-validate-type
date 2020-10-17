@@ -5,16 +5,18 @@ import {
   isNumber,
   isString,
   isFunction,
-  isDate,
   isPromise,
   isNull,
   isUndefined,
   isInteger,
 } from './util';
 
+export * from './util';
+
 const MAX_TYPE = 2048;
 const ALL_TYPE = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
 
+export const Self = -1;
 export const optional = 1;
 export const boolean = 2;
 export const number = 4;
@@ -25,8 +27,7 @@ export const Undefined = 64;
 export const array = 128;
 export const object = 256;
 export const func = 512;
-export const date = 1024;
-export const promise = 2048;
+export const promise = 1024;
 
 export const max = (value, a) => a >= value;
 export const min = (value, a) => a <= value;
@@ -51,7 +52,6 @@ const validateObj = {
   [array]: isArray,
   [object]: isObject,
   [func]: isFunction,
-  [date]: isDate,
   [promise]: isPromise,
 };
 
@@ -101,6 +101,18 @@ export class Type {
       value = [...valueParam];
     }
     if (type === optional) {
+      return;
+    }
+    if (!value && type === Self) {
+      return;
+    }
+    if (isFunction(type)) {
+      if (!(value instanceof type)) {
+        this.listError.push({
+          key,
+          message: `'${value} is not instance of class ${type.name}'`,
+        });
+      }
       return;
     }
     if (isArray(type) && isArray(type[0])) {
@@ -171,10 +183,12 @@ export class Type {
         });
       }
       if (!isArray(value)) {
-        this.listError.push({
-          key,
-          message: `value of '${key}' is not array`,
-        });
+        if (type && type[0] !== Self) {
+          this.listError.push({
+            key,
+            message: `value of '${key}' is not array`,
+          });
+        }
       } else {
         value.forEach((v) => {
           this.validateRecusive(v, type[0], key, valueParam);
@@ -182,10 +196,14 @@ export class Type {
       }
     } else if (isObject(value)) {
       if (!isObject(type)) {
-        this.listError.push({
-          key,
-          message: `type not found on ${key}`,
-        });
+        if (type === Self) {
+          this.validateRecusive(value, this.schema, keyParam, valueParam);
+        } else {
+          this.listError.push({
+            key,
+            message: `type not found on ${key}`,
+          });
+        }
       } else {
         // set value key same key in type
         Object.keys(type).forEach((keyOfKey) => {

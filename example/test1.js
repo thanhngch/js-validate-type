@@ -1,3 +1,4 @@
+// node -r esm example/test1.js
 import Type, { func, number, optional, string, 
     isArrayElement,
     max, min, length, email, regex, isOptional, integer } from '../src/type.js'

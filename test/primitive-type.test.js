@@ -6,15 +6,11 @@ import {
   integer,
   Null,
   Undefined,
-  date,
   func,
   promise,
   optional,
-} from '../src/type';
-
-import {
   isArray,
-} from '../src/util';
+} from '../src/type';
 
 it('Test string', () => {
   const Pet = new Type(string);
@@ -73,15 +69,6 @@ it('Test Null', () => {
 it('Test Undefined', () => {
   const A = new Type(Undefined);
   const a = undefined;
-
-  const errors = A.validate(a);
-  expect(isArray(errors)).toBe(true);
-  expect(errors.length).toBe(0);
-});
-
-it('Test Date', () => {
-  const A = new Type(date);
-  const a = new Date();
 
   const errors = A.validate(a);
   expect(isArray(errors)).toBe(true);

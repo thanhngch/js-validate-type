@@ -3,11 +3,8 @@ import {
   string,
   number,
   optional,
-} from '../src/type';
-
-import {
   isArray,
-} from '../src/util';
+} from '../src/type';
 
 it('Test object', () => {
   const Person = new Type({

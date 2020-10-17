@@ -5,11 +5,8 @@ import {
   length,
   regex,
   isOptional,
-} from '../src/type';
-
-import {
   isArray,
-} from '../src/util';
+} from '../src/type';
 
 it('Test condition in array function', () => {
   // check age only in 10, 12 or 15

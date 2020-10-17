@@ -3,11 +3,9 @@ import {
   string,
   integer,
   isArrayElement,
+  isArray,
+  isString,
 } from '../src/type';
-
-import {
-  isArray, isString,
-} from '../src/util';
 
 it('Test condition regex function error', () => {
   const A = new Type([[isArrayElement], [isString]]);
@@ -116,19 +114,20 @@ it('Test assert function', () => {
   });
 
   const me = {
-    books: 1,
+    books: 1, // error type
   };
   expect(Person.assert.bind(Person, me)).toThrow(Error);
 });
 
 it('Test assert function success', () => {
   const Person = new Type({
-    books: [string], // type not found
+    books: [string],
   });
 
   const me = {
     books: ['Code complete'],
   };
+  // not throw any errors
   expect(Person.assert.bind(Person, me)).not.toThrow(Error);
 });
 
@@ -198,4 +197,20 @@ it('Test empty type', () => {
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(1);
   expect(errors[0].key).toBe('profile');
+});
+
+it('Test error class type', () => {
+  class Person {}
+
+  const NewType = new Type({
+    bestFriend: Person,
+  });
+
+  const me = {
+    bestFriend: 123,
+  };
+
+  const errors = NewType.validate(me);
+  expect(isArray(errors)).toBe(true);
+  expect(errors.length).toBe(1);
 });

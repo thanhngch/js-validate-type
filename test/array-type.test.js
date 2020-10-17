@@ -2,12 +2,10 @@ import {
   Type,
   string,
   isOptional,
+  isArray,
+  isString,
   isArrayElement,
 } from '../src/type';
-
-import {
-  isArray, isString,
-} from '../src/util';
 
 it('Test array', () => {
   const Person = new Type({

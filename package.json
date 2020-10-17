@@ -1,7 +1,7 @@
 {
   "name": "js-validate-type",
   "description": "Validate type in javascript at runtime",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "scripts": {
     "test": "jest",
@@ -36,6 +36,7 @@
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jest": "^24.0.2",
+    "esm": "^3.2.25",
     "jest": "^26.4.2",
     "open-cli": "^6.0.1"
   }

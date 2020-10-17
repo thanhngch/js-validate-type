@@ -6,7 +6,6 @@ import {
   isSymbol,
   isObject,
   isArray,
-  isDate,
   isNaN,
   isNull,
   isUndefined,
@@ -57,12 +56,6 @@ it('Test isArray()', () => {
   expect(isArray({})).toBe(false);
 });
 
-it('Test isDate()', () => {
-  expect(isDate(new Date())).toBe(true);
-  expect(isDate(Date())).toBe(false);
-  expect(isDate(1)).toBe(false);
-});
-
 it('Test isNaN()', () => {
   expect(isNaN(NaN)).toBe(true);
   expect(isNaN(1)).toBe(false);
@@ -77,7 +70,6 @@ it('Test isNull()', () => {
 it('Test isUndefined()', () => {
   expect(isUndefined(undefined)).toBe(true);
   expect(isUndefined(null)).toBe(false);
-  expect(isDate(1)).toBe(false);
 });
 
 it('Test isInteger()', () => {
@@ -104,7 +96,6 @@ it('Test isPromise()', () => {
 
 it('Test isRegex()', () => {
   expect(isRegex(/\d/)).toBe(true);
-  expect(isDate(1)).toBe(false);
 });
 
 it('Test isBigInt()', () => {

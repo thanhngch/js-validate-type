@@ -29,11 +29,6 @@ export function isArray(value) {
   return Array.isArray(value);
 }
 
-// check is new Date()
-export function isDate(value) {
-  return value instanceof Date;
-}
-
 export function isNaN(value) {
   return typeof value === 'number' && Number.isNaN(value);
 }
