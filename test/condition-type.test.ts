@@ -1,11 +1,11 @@
 import {
   Type,
+  isArray,
+  isOptional,
+  length,
   max,
   min,
-  length,
   regex,
-  isOptional,
-  isArray,
 } from '../src/type';
 
 it('Test condition in array function', () => {

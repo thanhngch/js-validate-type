@@ -1,10 +1,10 @@
 import {
   Type,
-  string,
   integer,
-  isArrayElement,
   isArray,
+  isArrayElement,
   isString,
+  string,
 } from '../src/type';
 
 it('Test condition regex function error', () => {
@@ -132,7 +132,7 @@ it('Test assert function success', () => {
 });
 
 it('Test array with condition has parameter is array', () => {
-  const isLengthGreatThan1 = (_, __, arrayValue) => arrayValue.length > 1;
+  const isLengthGreatThan1 = (_: any, __: any, arrayValue: string | Array<any>) => arrayValue.length > 1;
 
   const Person = new Type({
     name: string,

@@ -1,9 +1,9 @@
 import {
   Type,
-  string,
+  isArray,
   number,
   optional,
-  isArray,
+  string,
 } from '../src/type';
 
 it('Test object', () => {

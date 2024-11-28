@@ -1,15 +1,15 @@
 import {
-  Type,
-  string,
-  number,
-  boolean,
-  integer,
   Null,
+  Type,
   Undefined,
+  boolean,
   func,
-  promise,
-  optional,
+  integer,
   isArray,
+  number,
+  optional,
+  promise,
+  string,
 } from '../src/type';
 
 it('Test string', () => {

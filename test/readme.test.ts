@@ -1,19 +1,19 @@
 // test example in readme
 import {
-  Type,
-  string,
-  number,
-  integer,
   array,
-  optional,
-  isOptional,
-  isNumber,
+  integer,
   isArray,
-  isString,
   isArrayElement,
-  min,
+  isNumber,
+  isOptional,
+  isString,
   length,
+  min,
+  number,
+  optional,
   Self,
+  string,
+  Type,
 } from '../src/type';
 
 it('Test example', () => {
@@ -99,8 +99,8 @@ it('Test example 4', () => {
 });
 
 it('Test example 5', () => {
-  const isEmail = (value) => isString(value) && /\S+@\S+\.\S+/.test(value);
-  const isEndsWith = (value, endString) => value.endsWith(endString);
+  const isEmail = (value: string) => isString(value) && /\S+@\S+\.\S+/.test(value);
+  const isEndsWith = (value: string, endString: string) => value.endsWith(endString);
 
   const Person = new Type({
     email: [[isEmail]],
@@ -175,7 +175,7 @@ it('Test example 9', () => {
   // fist and second parameter is null
   // only using arrayValue
   // eslint-disable-next-line arrow-body-style
-  const isCustomArray = (_, __, arrayValue) => {
+  const isCustomArray = (_: null, __: null, arrayValue: Array<any>) => {
     return (
       arrayValue.length === 2
       && isString(arrayValue[0])

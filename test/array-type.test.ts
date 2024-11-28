@@ -1,10 +1,10 @@
 import {
   Type,
-  string,
-  isOptional,
   isArray,
-  isString,
   isArrayElement,
+  isOptional,
+  isString,
+  string,
 } from '../src/type';
 
 it('Test array', () => {
@@ -64,7 +64,7 @@ it('Test array optional with condition', () => {
 });
 
 it('Test array with condition has parameter is array', () => {
-  const isLengthGreatThan1 = (_, __, arrayValue) => arrayValue.length > 1;
+  const isLengthGreatThan1 = (_: any, __: any, arrayValue: string | Array<any>) => arrayValue.length > 1;
 
   const Person = new Type({
     name: string,

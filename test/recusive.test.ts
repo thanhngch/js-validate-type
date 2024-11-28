@@ -1,8 +1,8 @@
 import {
-  Type,
-  string,
   Self,
+  Type,
   isArray,
+  string,
 } from '../src/type';
 
 it('Test recusive object', () => {

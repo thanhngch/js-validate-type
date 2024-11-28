@@ -1,9 +1,9 @@
 import {
   Type,
-  string,
-  number,
-  func,
   composeTypeToArray,
+  func,
+  number,
+  string,
 } from '../src/type';
 
 it('Test composeTypeToArray function', () => {

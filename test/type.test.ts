@@ -1,10 +1,10 @@
 import {
+  isArrayElement,
+  isOptional,
+  length,
   max,
   min,
   regex,
-  length,
-  isOptional,
-  isArrayElement,
 } from '../src/type';
 
 it('Test max()', () => {

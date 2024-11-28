@@ -5,7 +5,8 @@ import {
 
 it('Test array', () => {
   class Person {
-    constructor(name) {
+    name: string;
+    constructor(name: string) {
       this.name = name;
     }
   }

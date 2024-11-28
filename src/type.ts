@@ -1,20 +1,21 @@
 import {
-  isObject,
   isArray,
   isBoolean,
-  isNumber,
-  isString,
   isFunction,
-  isPromise,
-  isNull,
-  isUndefined,
   isInteger,
+  isNull,
+  isNumber,
+  isObject,
+  isPromise,
+  isString,
+  isUndefined,
 } from './util';
 
 export * from './util';
 
-const MAX_TYPE = 2048;
-const ALL_TYPE = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
+const MAX_TYPE = 1024;
+type TYPE_T = 1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024;
+const ALL_TYPE : TYPE_T[] = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
 
 export const Self = -1;
 export const optional = 1;
@@ -29,19 +30,23 @@ export const object = 256;
 export const func = 512;
 export const promise = 1024;
 
-export const max = (value, a) => a >= value;
-export const min = (value, a) => a <= value;
-export const regex = (value, regexExpress) => regexExpress.test(value);
+export const max = (value: number, a: number) => a >= value;
+export const min = (value: number, a: number) => a <= value;
+export const regex = (value: string, regexExpress: RegExp) => regexExpress.test(value);
 
 export const length = (
-  arrOrString,
-  [a, b = Number.POSITIVE_INFINITY],
+  arrOrString: string| Array<any>,
+  [a, b = Number.POSITIVE_INFINITY] : [number, number] | [number],
 ) => arrOrString.length >= a && arrOrString.length <= b;
 
 export const isOptional = () => true;
 export const isArrayElement = () => true;
 
-const validateObj = {
+type ValidateObjType = {
+  [K in TYPE_T]: (value: any) => boolean
+}
+
+const validateObj : ValidateObjType = {
   [optional]: () => true,
   [boolean]: isBoolean,
   [number]: isNumber,
@@ -55,21 +60,26 @@ const validateObj = {
   [promise]: isPromise,
 };
 
-export const composeTypeToArray = (_composeNumber) => {
-  const arrayType = [];
+export const composeTypeToArray = (_composeNumber: number) => {
+  const arrayType: TYPE_T[] = [];
   let composeNumber = _composeNumber;
   for (let i = 0; composeNumber > 0; i += 1) {
-    const remander = composeNumber % 2;
-    if (remander === 1) {
+    if (composeNumber % 2 === 1) {
       arrayType.push(ALL_TYPE[i]);
     }
-    composeNumber = Number.parseInt(composeNumber / 2, 10);
+    composeNumber = Math.floor(composeNumber / 2);
   }
   return arrayType;
 };
 
+type ListError = {
+  key?: string;
+  message: string;
+}
 export class Type {
-  constructor(_schema) {
+  schema: any;
+  listError: ListError[];
+  constructor(_schema: any) {
     this.schema = _schema;
     this.listError = [];
   }
@@ -77,11 +87,11 @@ export class Type {
   /**
    * Validate function 'valueParam' is has type 'typeParam'
    * @param {array|object|string|number|...} valueParam value to check
-   * @param {number} typeParam type is string, number, string | number,...
+   * @param {any} typeParam type is string, number, string | number,...
    * @param {string} key this is key path like profile.name
    * @param {object} wrapperObject object wrap valueParam
    */
-  validateRecusive(valueParam, typeParam, keyParam, wrapperObject) {
+  validateRecusive(valueParam: any, typeParam: any, keyParam?: string, wrapperObject?: any) {
     let key = keyParam;
     if (wrapperObject === undefined && !isObject(valueParam)) {
       // key is value if valueParam is not object
@@ -121,11 +131,20 @@ export class Type {
         let i = 0;
         let isArrayCheck = false;
         if (type[0][0] === isOptional) {
-          const keyOfObject = key && isString(key) ? key.split('.').pop() : undefined;
-          const keyDesc = Object.getOwnPropertyDescriptor(wrapperObject || {}, keyOfObject);
-          if (value === undefined && keyDesc === undefined) {
+          if (value === undefined) {
             // don't run for loop below
             i = Number.POSITIVE_INFINITY;
+          }
+          const keyOfObject = key && isString(key) ? key.split('.').pop() : undefined;
+          if (keyOfObject == undefined) {
+            // don't run for loop below
+            i = Number.POSITIVE_INFINITY;
+          } else {
+            const keyDesc = Object.getOwnPropertyDescriptor(wrapperObject || {}, keyOfObject);
+            if (keyDesc === undefined) {
+              // don't run for loop below
+              i = Number.POSITIVE_INFINITY;
+            }
           }
         }
         type.forEach((_type) => {
@@ -219,7 +238,7 @@ export class Type {
       }
     } else if (isNumber(type) && type < MAX_TYPE * 2) {
       // validate compose type, eg: string | number
-      const arrayType = composeTypeToArray(type);
+      const arrayType = composeTypeToArray(type as number);
       let validateResult = false;
       arrayType.forEach((aType) => {
         if (validateObj[aType](value)) {
@@ -240,13 +259,13 @@ export class Type {
     }
   }
 
-  validate(value) {
+  validate(value: any) {
     this.listError = [];
     this.validateRecusive(value, this.schema);
     return this.listError;
   }
 
-  assert(value) {
+  assert(value: any) {
     this.listError = [];
     this.validateRecusive(value, this.schema);
     if (this.listError.length !== 0) {
