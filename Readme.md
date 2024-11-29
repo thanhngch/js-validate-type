@@ -1,6 +1,6 @@
 ## About
 
-Validate type in javascript. A lightweight, no-dependency library. It's ~320 line of code.
+Validate type in javascript in runtime. A lightweight, no-dependency library. It's ~320 line of code.
 
 [![npm version](http://img.shields.io/npm/v/js-validate-type.svg?style=flat-square)](https://npmjs.org/package/js-validate-type)
 [![GitHub license](https://img.shields.io/github/license/thanhngch/js-validate-type.svg)](https://github.com/thanhngch/js-validate-type/blob/master/LICENCE)
@@ -71,7 +71,7 @@ const errors = Person.validate(me); // no errors
 ## Union type
 
 Using union type of simple types using `|`
-
+Eg:
 - `number | string | array`: number or string or array
 - `string | optional`: is optional string
 
@@ -478,8 +478,9 @@ const errors = Person.validate(me);
 //]
 ```
 
-### Using assert function
-If has error assert function will throw a Error.
+### Using assert or check function
+If has error assert function will throw an error.
+Check function return boolean.
 
 Example 14
 ```js
@@ -493,4 +494,7 @@ const me = {
 
 const errors = Person.assert(me);
 // -> throw a new Error
+
+const ok = Person.check(me);
+// => false
 ```

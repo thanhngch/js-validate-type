@@ -30,6 +30,9 @@ it('Test example', () => {
   const errors = Person.validate(me);
   expect(isArray(errors)).toBe(true);
   expect(errors.length).toBe(0);
+
+  const ok = Person.check(me);
+  expect(ok).toBe(true);
 });
 
 it('Test example 1', () => {
@@ -62,7 +65,16 @@ it('Test example 2', () => {
   expect(errors.length).toBe(0);
 });
 
-it('Test example 3', () => {
+it('Test example 3.1', () => {
+  const Height = new Type(number | string);
+  let height = 172;
+
+  const hErrors = Height.validate(height); // no errors
+  expect(isArray(hErrors)).toBe(true);
+  expect(hErrors.length).toBe(0);
+});
+
+it('Test example 3.2', () => {
   const Person = new Type({
     height: number | string,
   });
@@ -126,7 +138,7 @@ it('Test example 6', () => {
     // name is string with length great than 2
     name: [[isString], [length, [2]]],
 
-    // books is array with array length from 2 to 10
+    // books is array with array length from >= 2 to <= 10
     books: [[isArray], [length, [2, 10]]],
   });
 
@@ -334,4 +346,5 @@ it('Test example 14', () => {
   };
 
   expect(Person.assert.bind(Person, me)).toThrow(Error);
+  expect(Person.check(me)).toEqual(false);
 });

@@ -58,3 +58,12 @@ export function isRegex(value: any) {
 export function isBigInt(value: any) {
   return typeof value === 'bigint';
 }
+
+export const max = (value: number, a: number) => a >= value;
+export const min = (value: number, a: number) => a <= value;
+export const regex = (value: string, regexExpress: RegExp) => regexExpress.test(value);
+
+export const length = (
+  arrOrString: string| Array<any>,
+  [a, b = Number.POSITIVE_INFINITY] : [number, number] | [number],
+) => arrOrString.length >= a && arrOrString.length <= b;

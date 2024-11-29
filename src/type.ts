@@ -30,17 +30,9 @@ export const object = 256;
 export const func = 512;
 export const promise = 1024;
 
-export const max = (value: number, a: number) => a >= value;
-export const min = (value: number, a: number) => a <= value;
-export const regex = (value: string, regexExpress: RegExp) => regexExpress.test(value);
-
-export const length = (
-  arrOrString: string| Array<any>,
-  [a, b = Number.POSITIVE_INFINITY] : [number, number] | [number],
-) => arrOrString.length >= a && arrOrString.length <= b;
-
 export const isOptional = () => true;
 export const isArrayElement = () => true;
+export const isFixedArrayElement = (...args: Array<any>) => true;
 
 type ValidateObjType = {
   [K in TYPE_T]: (value: any) => boolean
@@ -99,7 +91,7 @@ export class Type {
     }
     let type = typeParam;
     if (typeParam instanceof Type) {
-      type = type.schema;
+      type = typeParam.schema;
     }
     let value = valueParam;
     if (isObject(valueParam)) {
@@ -140,7 +132,7 @@ export class Type {
             // don't run for loop below
             i = Number.POSITIVE_INFINITY;
           } else {
-            const keyDesc = Object.getOwnPropertyDescriptor(wrapperObject || {}, keyOfObject);
+            const keyDesc = Object.getOwnPropertyDescriptor(wrapperObject, keyOfObject);
             if (keyDesc === undefined) {
               // don't run for loop below
               i = Number.POSITIVE_INFINITY;
@@ -159,15 +151,16 @@ export class Type {
           let values = [value];
           if (isArrayCheck) {
             values = value;
-          }
-          if (!isArray(values)) {
-            this.listError.push({
-              key,
-              message: `'${key}' is not array in compare function`,
-            });
-            break;
+            if (!isArray(values)) {
+              this.listError.push({
+                key,
+                message: `'${key}' is not array in compare function`,
+              });
+              break;
+            }
           }
           if (functionCheck.length === 3) {
+            // custom function check
             if (!functionCheck(null, null, values)) {
               this.listError.push({
                 key,
@@ -175,14 +168,15 @@ export class Type {
               });
               break;
             }
-          }
-          for (let j = 0; j < values.length; j += 1) {
-            const valueOfValues = values[j];
-            if (!functionCheck(valueOfValues, type[i][1], values)) {
-              this.listError.push({
-                key: isArray(key) ? valueOfValues : key,
-                message: `'${valueOfValues}' is not valid in compare function`,
-              });
+          } else {
+            for (let j = 0; j < values.length; j += 1) {
+              const valueOfValues = values[j];
+              if (!functionCheck(valueOfValues, type[i][1])) {
+                this.listError.push({
+                  key: isArray(key) ? valueOfValues : key,
+                  message: `'${valueOfValues}' is not valid in compare function`,
+                });
+              }
             }
           }
         }
@@ -263,6 +257,10 @@ export class Type {
     this.listError = [];
     this.validateRecusive(value, this.schema);
     return this.listError;
+  }
+
+  check(value: any) {
+    return this.validate(value).length === 0;
   }
 
   assert(value: any) {
