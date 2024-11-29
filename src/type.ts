@@ -32,7 +32,20 @@ export const promise = 1024;
 
 export const isOptional = () => true;
 export const isArrayElement = () => true;
-export const isFixedArrayElement = (...args: Array<any>) => true;
+
+const FixedArrayElement = 'FixedArrayElement';
+type FixedArrayElementType = {
+  type: string;
+  args: Array<any>;
+}
+export const isFixedArrayElement = (...args: Array<any>) => { 
+  return () => {
+    return {
+      type: FixedArrayElement,
+      args
+    } as FixedArrayElementType
+  }; 
+};
 
 type ValidateObjType = {
   [K in TYPE_T]: (value: any) => boolean
@@ -139,12 +152,20 @@ export class Type {
             }
           }
         }
+
         type.forEach((_type) => {
           // check function is [[isArray]]
           if (_type[0] === isArrayElement) {
             isArrayCheck = true;
           }
+          if (isFunction(_type[0]) && _type[0].length == 0) {
+            let fixedArrayElementObj = _type[0]() as FixedArrayElementType | null;
+            if (fixedArrayElementObj && fixedArrayElementObj.type === FixedArrayElement) {
+              isArrayCheck = true;
+            }
+          }
         });
+
         for (; i < type.length; i += 1) {
           // functionCheck is min, max, isString,...
           const functionCheck = type[i][0];
@@ -159,7 +180,28 @@ export class Type {
               break;
             }
           }
-          if (functionCheck.length === 3) {
+          let fixedArrayElementObj = null;
+          if (type[i][0].length == 0) {
+            fixedArrayElementObj = type[i][0]() as FixedArrayElementType | null;
+          }
+          if (fixedArrayElementObj && fixedArrayElementObj.type === FixedArrayElement) {
+            let args = fixedArrayElementObj.args;
+            for (let j = 0; j < values.length; j += 1) {
+              const valueOfValues = values[j];
+              if (!args || args.length !== values.length) {
+                this.listError.push({
+                  key: isArray(key) ? valueOfValues : key,
+                  message: `'${valueOfValues}' is not valid in check array fixed of length`,
+                });
+                break;
+              } else if (!new Type(args[j]).check(valueOfValues)) {
+                this.listError.push({
+                  key: isArray(key) ? valueOfValues : key,
+                  message: `'${valueOfValues}' is not valid in check array fixed`,
+                });
+              }
+            }
+          } else if (functionCheck.length === 3) {
             // custom function check
             if (!functionCheck(null, null, values)) {
               this.listError.push({

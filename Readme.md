@@ -284,6 +284,41 @@ const me = {
 const errors = Person.validate(me); // no errors
 ```
 
+### `isFixedArrayElement` function is check array with fixed element
+`isFixedArrayElement(type1, type2, ...)` function will check element in array has element1 has type1, 
+element1 has type2,...
+
+```js
+const isEndsWith = (value, endString) => isString(value) && value.endsWith(endString);
+
+const Person = new Type({
+  books: [[isFixedArrayElement(string, number, [[isEndsWith, ['@gmail.com']]])]],
+});
+
+const me = {
+  books: ['Harry Porter', 1984, 'harry@gmail.com'],
+};
+
+const errors = Person.validate(me);
+```
+
+This type same with:
+
+```js
+const isCustomArray = (_: null, __: null, arrayValue: Array<any>) => {
+  return (
+    arrayValue.length === 3
+    && new Type(string).check(arrayValue[0])
+    && new Type(number).check(arrayValue[1])
+    && new Type([[isEndsWith, ['@gmail.com']]]).check(arrayValue[2])
+  );
+};
+
+const Person = new Type({
+  books: [[isArrayElement], [isCustomArray]],
+});
+```
+
 ## Object type
 
 Using object can compose other type.

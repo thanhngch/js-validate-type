@@ -14,7 +14,9 @@
         "sourceMap": true,                       // Generate source maps for debugging
         "removeComments": true,                  // Remove comments in output files
         "noImplicitAny": true,                  // Raise error on expressions and declarations with implied 'any' type
-        "declaration": true                      // Generate corresponding .d.ts files
+        "declaration": true,                      // Generate corresponding .d.ts files
+        "emitDeclarationOnly": true,   // Ensure that .d.ts files are created by tsc, but not .js files
+        "isolatedModules": true // Ensure that Babel can safely transpile files in the TypeScript project
     },
     "include": [
         "src/**/*"                              // Include all files in src directory
