@@ -18,7 +18,10 @@
     "type validate"
   ],
   "author": "Nguyễn Chí Thanh",
-  "repository": "https://github.com/thanhngch/js-validate-type",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thanhngch/js-validate-type.git"
+  },
   "engines": {
     "node": ">=8"
   },
