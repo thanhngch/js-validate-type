@@ -1,7 +1,7 @@
 {
   "name": "js-validate-type",
   "description": "Validate type in javascript at runtime",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "MIT",
   "scripts": {
     "test": "jest",
@@ -9,7 +9,8 @@
     "show-test": "yarn run test-cov && open-cli ./coverage/lcov-report/index.html",
     "lint": "eslint src",
     "build": "babel --extensions .ts,.tsx -d build src/*.ts",
-    "prepublish": "npm run build"
+    "build-type": "tsc",
+    "prepublish": "npm run build && tsc"
   },
   "keywords": [
     "validation",
@@ -29,6 +30,7 @@
     "build"
   ],
   "main": "build/type.js",
+  "types": "build/type.d.ts",
   "devDependencies": {
     "@babel/cli": "^7.25.9",
     "@babel/core": "^7.26.0",
@@ -46,5 +48,8 @@
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "js-validate-type": "^1.1.0"
   }
 }

@@ -153,7 +153,7 @@ export class Type {
           }
         }
 
-        type.forEach((_type) => {
+        type.forEach((_type: any) => {
           // check function is [[isArray]]
           if (_type[0] === isArrayElement) {
             isArrayCheck = true;
@@ -245,7 +245,7 @@ export class Type {
           });
         }
       } else {
-        value.forEach((v) => {
+        value.forEach((v: any) => {
           this.validateRecusive(v, type[0], key, valueParam);
         });
       }

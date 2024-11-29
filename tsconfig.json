@@ -9,7 +9,7 @@
         "skipLibCheck": true,                    // Skip type checking of declaration files
         "forceConsistentCasingInFileNames": true, // Ensure consistent casing in file names
         "moduleResolution": "node",              // Use Node.js style module resolution
-        "outDir": "./dist",                      // Output directory for compiled files
+        "outDir": "./build",                      // Output directory for compiled files
         "rootDir": "./src",                      // Source files directory
         "sourceMap": true,                       // Generate source maps for debugging
         "removeComments": true,                  // Remove comments in output files
