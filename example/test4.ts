@@ -1,9 +1,10 @@
-// node -r esm example/test4.js
+// bun example/test4.js
 // test class
-import Type, { promise } from '../src/type.js';
+import Type from '../src/type';
 
 class Person {
-  constructor(name) {
+  name: string;
+  constructor(name: string) {
     this.name = name;
   }
 };

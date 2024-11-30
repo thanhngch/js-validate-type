@@ -1,8 +1,18 @@
-// node -r esm example/test1.js
-import Type, { func, number, optional, string, 
-    isArrayElement,
-    max, min, length, email, regex, isOptional, integer } from '../src/type.js'
-  import { isArray, isNumber, isString } from '../src/util.js';
+// bun example/test1.ts
+import Type, {
+    isOptional,
+    length,
+    max, min,
+    number, optional,
+    regex,
+    string
+} from '../src/type.ts';
+import { isString } from '../src/util.ts';
+
+const email = (value) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return isString(value) && emailPattern.test(value);
+}
 
 const Pet = new Type({
     name: string,

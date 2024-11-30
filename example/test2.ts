@@ -1,8 +1,8 @@
-// node -r esm example/test2.js
-import Type, { func, number, optional, string, 
-  isArrayElement,
-  max, min, length, email, regex, isOptional, integer } from '../src/type.js'
-import { isArray, isNumber, isString } from '../src/util.js';
+// bun example/test2.js
+import Type, {
+  isArrayElement
+} from '../src/type.ts';
+import { isNumber, isString } from '../src/util.ts';
 
 const isPositive = (value) => value > 0;
 
