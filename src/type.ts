@@ -65,25 +65,19 @@ const validateObj : ValidateObjType = {
   [promise]: isPromise,
 };
 
-export const composeTypeToArray = (_composeNumber: number) => {
-  const arrayType: TYPE_T[] = [];
-  let composeNumber = _composeNumber;
-  for (let i = 0; composeNumber > 0; i += 1) {
-    if (composeNumber % 2 === 1) {
-      arrayType.push(ALL_TYPE[i]);
-    }
-    composeNumber = Math.floor(composeNumber / 2);
-  }
-  return arrayType;
+export const composeTypeToArray = (composeNumber: number): TYPE_T[] => {
+  return ALL_TYPE.filter((type) => (composeNumber & type) !== 0);
 };
 
 type ListError = {
   key?: string;
   message: string;
 }
+
 export class Type {
   schema: any;
   listError: ListError[];
+
   constructor(_schema: any) {
     this.schema = _schema;
     this.listError = [];
@@ -102,90 +96,88 @@ export class Type {
       // key is value if valueParam is not object
       key = valueParam;
     }
+
     let type = typeParam;
     if (typeParam instanceof Type) {
       type = typeParam.schema;
     }
-    let value = valueParam;
-    if (isObject(valueParam)) {
-      // create clone object
-      value = {
-        ...valueParam,
-      };
-    } else if (isArray(valueParam)) {
-      value = [...valueParam];
-    }
+
     if (type === optional) {
       return;
     }
-    if (!value && type === Self) {
+
+    if (!valueParam && type === Self) {
       return;
     }
+
+    if (type === Self) {
+      this.validateRecusive(valueParam, this.schema, key, wrapperObject);
+      return;
+    }
+
     if (isFunction(type)) {
-      if (!(value instanceof type)) {
+      if (!(valueParam instanceof type)) {
         this.listError.push({
           key,
-          message: `'${value} is not instance of class ${type.name}'`,
+          message: `'${valueParam} is not instance of class ${type.name}'`,
         });
       }
       return;
     }
+
     if (isArray(type) && isArray(type[0])) {
       // function test eg: max, min, length, isString, isOptional, ...
       if (isFunction(type[0][0])) {
-        let i = 0;
-        let isArrayCheck = false;
+        let shouldSkip = false;
         if (type[0][0] === isOptional) {
-          if (value === undefined) {
-            // don't run for loop below
-            i = Number.POSITIVE_INFINITY;
-          }
-          const keyOfObject = key && isString(key) ? key.split('.').pop() : undefined;
-          if (keyOfObject == undefined) {
-            // don't run for loop below
-            i = Number.POSITIVE_INFINITY;
-          } else {
-            const keyDesc = Object.getOwnPropertyDescriptor(wrapperObject, keyOfObject);
-            if (keyDesc === undefined) {
-              // don't run for loop below
-              i = Number.POSITIVE_INFINITY;
-            }
+          const keyOfObject = typeof key === 'string' ? key.split('.').pop() : undefined;
+          if (
+            valueParam === undefined ||
+            keyOfObject === undefined ||
+            (wrapperObject && Object.getOwnPropertyDescriptor(wrapperObject, keyOfObject) === undefined)
+          ) {
+            shouldSkip = true;
           }
         }
 
-        type.forEach((_type: any) => {
-          // check function is [[isArray]]
-          if (_type[0] === isArrayElement) {
-            isArrayCheck = true;
+        if (shouldSkip) {
+          return;
+        }
+
+        const isArrayCheck = type.some((_type: any) => {
+          if (_type[0] === isArrayElement) return true;
+          if (isFunction(_type[0]) && _type[0].length === 0) {
+            const res = _type[0]();
+            return res && res.type === FixedArrayElement;
           }
-          if (isFunction(_type[0]) && _type[0].length == 0) {
-            let fixedArrayElementObj = _type[0]() as FixedArrayElementType | null;
-            if (fixedArrayElementObj && fixedArrayElementObj.type === FixedArrayElement) {
-              isArrayCheck = true;
-            }
-          }
+          return false;
         });
 
-        for (; i < type.length; i += 1) {
-          // functionCheck is min, max, isString,...
-          const functionCheck = type[i][0];
-          let values = [value];
-          if (isArrayCheck) {
-            values = value;
-            if (!isArray(values)) {
-              this.listError.push({
-                key,
-                message: `'${key}' is not array in compare function`,
-              });
-              break;
+        if (isArrayCheck && !isArray(valueParam)) {
+          this.listError.push({
+            key,
+            message: `'${key}' is not array in compare function`,
+          });
+          return;
+        }
+
+        const values = isArrayCheck ? valueParam : [valueParam];
+
+        for (const [functionCheck, checkArg] of type) {
+          if (functionCheck === isOptional || functionCheck === isArrayElement) {
+            continue;
+          }
+
+          let fixedArrayElementObj: FixedArrayElementType | null = null;
+          if (isFunction(functionCheck) && functionCheck.length === 0) {
+            const res = functionCheck();
+            if (res && res.type === FixedArrayElement) {
+              fixedArrayElementObj = res;
             }
           }
-          let fixedArrayElementObj = null;
-          if (type[i][0].length == 0) {
-            fixedArrayElementObj = type[i][0]() as FixedArrayElementType | null;
-          }
-          if (fixedArrayElementObj && fixedArrayElementObj.type === FixedArrayElement) {
-            let args = fixedArrayElementObj.args;
+
+          if (fixedArrayElementObj) {
+            const args = fixedArrayElementObj.args;
             for (let j = 0; j < values.length; j += 1) {
               const valueOfValues = values[j];
               if (!args || args.length !== values.length) {
@@ -201,8 +193,7 @@ export class Type {
                 });
               }
             }
-          } else if (functionCheck.length === 3) {
-            // custom function check
+          } else if (isFunction(functionCheck) && functionCheck.length === 3) {
             if (!functionCheck(null, null, values)) {
               this.listError.push({
                 key,
@@ -210,10 +201,10 @@ export class Type {
               });
               break;
             }
-          } else {
+          } else if (isFunction(functionCheck)) {
             for (let j = 0; j < values.length; j += 1) {
               const valueOfValues = values[j];
-              if (!functionCheck(valueOfValues, type[i][1])) {
+              if (!functionCheck(valueOfValues, checkArg)) {
                 this.listError.push({
                   key: isArray(key) ? valueOfValues : key,
                   message: `'${valueOfValues}' is not valid in compare function`,
@@ -222,14 +213,19 @@ export class Type {
             }
           }
         }
-      } else if (type[0].indexOf(value) === -1) {
-        // in array test
-        this.listError.push({
-          key,
-          message: `'${key}' is not valid of ${type[0]}`,
-        });
+      } else {
+        // in array test (enum test)
+        if (type[0].indexOf(valueParam) === -1) {
+          this.listError.push({
+            key,
+            message: `'${key}' is not valid of ${type[0]}`,
+          });
+        }
       }
-    } else if (isArray(type)) {
+      return;
+    }
+
+    if (isArray(type)) {
       // check array of type, eg: [string] is value of string
       if (type.length !== 1) {
         this.listError.push({
@@ -237,7 +233,7 @@ export class Type {
           message: 'array type not support',
         });
       }
-      if (!isArray(value)) {
+      if (!isArray(valueParam)) {
         if (type && type[0] !== Self) {
           this.listError.push({
             key,
@@ -245,54 +241,46 @@ export class Type {
           });
         }
       } else {
-        value.forEach((v: any) => {
+        valueParam.forEach((v: any) => {
           this.validateRecusive(v, type[0], key, valueParam);
         });
       }
-    } else if (isObject(value)) {
-      if (!isObject(type)) {
-        if (type === Self) {
-          this.validateRecusive(value, this.schema, keyParam, valueParam);
-        } else {
-          this.listError.push({
-            key,
-            message: `type not found on ${key}`,
-          });
-        }
-      } else {
-        // set value key same key in type
-        Object.keys(type).forEach((keyOfKey) => {
-          if (value[keyOfKey] === undefined) {
-            value[keyOfKey] = undefined;
-          }
+      return;
+    }
+
+    if (isObject(type)) {
+      if (!isObject(valueParam)) {
+        this.listError.push({
+          key,
+          message: `type of '${key}' not found`,
         });
-        // validate object
-        Object.keys(value).forEach((keyOfValue) => {
+      } else {
+        const allKeys = new Set([...Object.keys(type), ...Object.keys(valueParam)]);
+        allKeys.forEach((keyOfValue) => {
           const path = key ? `${key}.${keyOfValue}` : keyOfValue;
-          this.validateRecusive(value[keyOfValue], type[keyOfValue], path, valueParam);
+          this.validateRecusive(valueParam[keyOfValue], type[keyOfValue], path, valueParam);
         });
       }
-    } else if (isNumber(type) && type < MAX_TYPE * 2) {
+      return;
+    }
+
+    if (isNumber(type) && type < MAX_TYPE * 2) {
       // validate compose type, eg: string | number
-      const arrayType = composeTypeToArray(type as number);
-      let validateResult = false;
-      arrayType.forEach((aType) => {
-        if (validateObj[aType](value)) {
-          validateResult = true;
-        }
-      });
-      if (validateResult === false) {
+      const arrayType = composeTypeToArray(type);
+      const validateResult = arrayType.some((aType) => validateObj[aType](valueParam));
+      if (!validateResult) {
         this.listError.push({
           key,
           message: `'${key}' is not valid type`,
         });
       }
-    } else {
-      this.listError.push({
-        key,
-        message: `type of '${key}' not found`,
-      });
+      return;
     }
+
+    this.listError.push({
+      key,
+      message: `type of '${key}' not found`,
+    });
   }
 
   validate(value: any) {
@@ -306,10 +294,9 @@ export class Type {
   }
 
   assert(value: any) {
-    this.listError = [];
-    this.validateRecusive(value, this.schema);
-    if (this.listError.length !== 0) {
-      const message = this.listError.map((e) => e.message).join('\n');
+    const errors = this.validate(value);
+    if (errors.length !== 0) {
+      const message = errors.map((e) => e.message).join('\n');
       throw new Error(message);
     }
   }
